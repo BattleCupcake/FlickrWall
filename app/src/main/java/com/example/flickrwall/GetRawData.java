@@ -25,9 +25,9 @@ class GetRawData extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+        Log.d(TAG, "onPostExecute: parametr = " + s);
     }
-
+        
     @Override
     protected String doInBackground(String... strings) {
         HttpURLConnection connection = null;
@@ -47,13 +47,35 @@ class GetRawData extends AsyncTask<String, Void, String> {
             Log.d(TAG, "doInBackground: The response code was: " + response);
             StringBuilder result = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+//            String line;
+//            while (null != (line = reader.readLine())){
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                result.append(line).append("\n");
+            }
+            mDownloadStatus = DownloadStatus.OK;
+            return result.toString();
+
         } catch (MalformedURLException e) {
             Log.e(TAG, "doInBackground: Invalid URL" + e.getMessage() );
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: IO Exeption reading data: " + e.getMessage() );
         } catch (SecurityException e) {
             Log.e(TAG, "doInBackground: Security exception. Needs permission? " + e.getMessage() );
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "doInBackground: Error closing stream" + e.getMessage());
+                }
+            }
         }
+
+        mDownloadStatus = DownloadStatus.FAILED_OR_EMPTY;
         return null;
     }
 }
