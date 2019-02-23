@@ -18,16 +18,35 @@ enum DownloadStatus {IDLE, PROCESSING, NOT_INITIALISED, FAILED_OR_EMPTY, OK}
 class GetRawData extends AsyncTask<String, Void, String> {
     private static final String TAG = "GetRawData";
     private DownloadStatus mDownloadStatus;
+    private final OnDownloadComplete mCallBack;
 
-    public GetRawData() {
+    interface OnDownloadComplete {
+        void onDownloadComplete(String data, DownloadStatus status);
+    }
+
+    public GetRawData(OnDownloadComplete callback) {
         this.mDownloadStatus = DownloadStatus.IDLE;
+        mCallBack = callback;
+    }
+
+    void runInTheSameThread(String s){
+        Log.d(TAG, "runInTheSameThread starts");
+//        onPostExecute(doInBackground(s));
+        if (mCallBack != null) {
+            mCallBack.onDownloadComplete(doInBackground(s) ,mDownloadStatus);
+        }
+        Log.d(TAG, "runInTheSameThread ends");
     }
 
     @Override
     protected void onPostExecute(String s) {
-        super.onPostExecute(s);
+//        Log.d(TAG, "onPostExecute: parametr = " + s);
+        if (mCallBack != null) {
+            mCallBack.onDownloadComplete(s, mDownloadStatus);
+        }
+        Log.d(TAG, "onPostExecute: ends");
     }
-
+        
     @Override
     protected String doInBackground(String... strings) {
         HttpURLConnection connection = null;
@@ -47,13 +66,35 @@ class GetRawData extends AsyncTask<String, Void, String> {
             Log.d(TAG, "doInBackground: The response code was: " + response);
             StringBuilder result = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+//            String line;
+//            while (null != (line = reader.readLine())){
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                result.append(line).append("\n");
+            }
+            mDownloadStatus = DownloadStatus.OK;
+            return result.toString();
+
         } catch (MalformedURLException e) {
             Log.e(TAG, "doInBackground: Invalid URL" + e.getMessage() );
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: IO Exeption reading data: " + e.getMessage() );
         } catch (SecurityException e) {
             Log.e(TAG, "doInBackground: Security exception. Needs permission? " + e.getMessage() );
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "doInBackground: Error closing stream" + e.getMessage());
+                }
+            }
         }
+
+        mDownloadStatus = DownloadStatus.FAILED_OR_EMPTY;
         return null;
     }
 }
