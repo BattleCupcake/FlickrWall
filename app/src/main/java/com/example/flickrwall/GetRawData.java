@@ -40,7 +40,6 @@ class GetRawData extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-//        Log.d(TAG, "onPostExecute: parametr = " + s);
         if (mCallBack != null) {
             mCallBack.onDownloadComplete(s, mDownloadStatus);
         }
@@ -67,8 +66,6 @@ class GetRawData extends AsyncTask<String, Void, String> {
             StringBuilder result = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-//            String line;
-//            while (null != (line = reader.readLine())){
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 result.append(line).append("\n");
             }

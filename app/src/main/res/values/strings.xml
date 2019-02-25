@@ -4,4 +4,10 @@
     <string name="downloaded_flickr_photo">Downloaded Flickr photo</string>
     <string name="search">Search</string>
     <string name="photo_tags_text">Tags: %s</string>
+    <string name="photo_title_text">Title: %s</string>
+    <string name="empty_photo">No photos match your search.</string>
+    <string name="labale_activity_detaile">Photo Detaile</string>
+    <string name="label_activity_search">Search Activity</string>
+    <string name="search_hint">Enter photo tags</string>
+    <string name="title_activity_search">Search Activity</string>
 </resources>
