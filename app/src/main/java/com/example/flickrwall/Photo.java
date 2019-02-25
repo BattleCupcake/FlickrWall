@@ -1,6 +1,11 @@
 package com.example.flickrwall;
 
-class Photo {
+import java.io.Serializable;
+
+class Photo implements Serializable {
+
+    public static final long serialVersionUID = 1L;
+
 
     private String mTitle;
     private String mAuthor;
@@ -53,4 +58,5 @@ class Photo {
                 ", mImage='" + mImage + '\'' +
                 '}';
     }
+
 }
