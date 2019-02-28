@@ -38,6 +38,7 @@ class FlickrRecyclerViewAdapter extends RecyclerView.Adapter<FlickrRecyclerViewA
                     .error(R.drawable.placeholder)
                     .placeholder(R.drawable.placeholder)
                     .into(holder.thumbnail);
+            holder.title.setText(photoItem.getTitle());
         }
     }
 

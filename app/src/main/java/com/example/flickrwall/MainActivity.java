@@ -60,10 +60,7 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
          if (id == R.id.action_search) {
              Intent intent = new Intent(this, SearchActivity.class);
              startActivity(intent);
@@ -84,13 +81,12 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(MainActivity.this, "Normal tap a position " + position, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, PhotoDetailActivity.class);
+        intent.putExtra(PHOTO_TRANSFER, mFlickrRecyclerViewAdapter.getPhoto(position));
+        startActivity(intent);
     }
 
     @Override
     public void onItemLongClick(View view, int position) {
-        Intent intent = new Intent(this, PhotoDetailActivity.class);
-        intent.putExtra(PHOTO_TRANSFER, mFlickrRecyclerViewAdapter.getPhoto(position));
-        startActivity(intent);
     }
 }
